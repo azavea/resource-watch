@@ -1,5 +1,6 @@
 import App from 'next/app';
 import { Provider } from 'react-redux';
+import { Provider as AuthenticationProvider } from 'next-auth/client';
 import withRedux from 'next-redux-wrapper';
 import { QueryClient, QueryClientProvider } from 'react-query';
 
@@ -62,7 +63,15 @@ class RWApp extends App {
       <Provider store={store}>
         <QueryClientProvider client={queryClient}>
           <MediaContextProvider>
-            <Component {...pageProps} />
+            <AuthenticationProvider
+              session={pageProps.session}
+              options={{
+                clientMaxAge: 5 * 60, // Re-fetch session if cache is older than 60 seconds
+                keepAlive: 10 * 60, // Send keepAlive message every 10 minutes
+              }}
+            >
+              <Component {...pageProps} />
+            </AuthenticationProvider>
           </MediaContextProvider>
         </QueryClientProvider>
       </Provider>

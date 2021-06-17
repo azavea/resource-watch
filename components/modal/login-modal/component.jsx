@@ -2,6 +2,7 @@ import { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import { toastr } from 'react-redux-toastr';
 import Link from 'next/link';
+import { signIn } from 'next-auth/client';
 import ReCAPTCHA from 'react-google-recaptcha';
 
 // components
@@ -42,7 +43,7 @@ class LoginModal extends PureComponent {
 
     if (!isValid || (captcha === null && register)) return;
 
-    setTimeout(() => {
+    setTimeout(async () => {
       // register user
       if (register) {
         this.setState({ loading: true }, () => {
@@ -60,21 +61,41 @@ class LoginModal extends PureComponent {
             });
         });
       } else {
-        // sign-in user
-        loginUser(userSettings)
-          .then((data) => {
-            setUser(data);
-            if (redirect) window.location.href = '/myrw';
-          })
-          .catch((err) => {
-            const { status, statusText } = err.response;
+        try {
+          const {
+            email,
+            password,
+          } = userSettings;
 
-            const message = status === 401
-              ? 'Your email and password combination is incorrect.'
-              : `${status}:${statusText}`;
-
-            toastr.error(message);
+          await signIn('credentials', {
+            email,
+            password,
+            callbackUrl: '/myrw',
           });
+        } catch (err) {
+          console.log(err);
+          // const { status, statusText } = err.response;
+          const message = err.message === '401'
+            ? 'Your email and password combination is incorrect.'
+            : 'Something went wrong';
+
+          toastr.error(message);
+        }
+        // sign-in user
+        // loginUser(userSettings)
+        //   .then((data) => {
+        //     setUser(data);
+        //     if (redirect) window.location.href = '/myrw';
+        //   })
+        //   .catch((err) => {
+        // const { status, statusText } = err.response;
+
+        // const message = status === 401
+        //   ? 'Your email and password combination is incorrect.'
+        //   : `${status}:${statusText}`;
+
+        // toastr.error(message);
+        //   });
       }
     }, 0);
   }
