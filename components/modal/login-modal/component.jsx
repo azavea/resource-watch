@@ -11,7 +11,7 @@ import Input from 'components/form/Input';
 import Spinner from 'components/ui/Spinner';
 
 // services
-import { loginUser, registerUser } from 'services/user';
+import { registerUser } from 'services/user';
 
 // constants
 import { FORM_ELEMENTS } from './constants';
@@ -36,7 +36,9 @@ class LoginModal extends PureComponent {
     if (e) e.preventDefault();
     FORM_ELEMENTS.validate();
     const isValid = FORM_ELEMENTS.isValid();
-    const { setUser, redirect } = this.props;
+    const {
+      callbackUrl
+    } = this.props;
     const { register, captcha, ...userSettings } = this.state;
 
     if (captcha === null && register) toastr.error('Please fill the captcha');
@@ -70,10 +72,9 @@ class LoginModal extends PureComponent {
           await signIn('credentials', {
             email,
             password,
-            callbackUrl: '/myrw',
+            ...callbackUrl && { callbackUrl },
           });
         } catch (err) {
-          console.log(err);
           // const { status, statusText } = err.response;
           const message = err.message === '401'
             ? 'Your email and password combination is incorrect.'
@@ -148,6 +149,7 @@ class LoginModal extends PureComponent {
                         default: password,
                         type: 'password',
                         placeholder: '*********',
+                        autoComplete: 'current-password',
                       }}
                     >
                       {Input}

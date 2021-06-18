@@ -38,7 +38,7 @@ class Profile extends PureComponent {
   }
 
   state = {
-    user: this.props.user,
+    user: this.props.user || {},
     step: 1,
     submitting: false,
     loading: false,
@@ -95,12 +95,13 @@ class Profile extends PureComponent {
   onChange = (value) => { this.setState({ user: { ...this.state.user, ...value } }); }
 
   render() {
-    const { user, loading } = this.state;
+    const { loading } = this.state;
+    const { user } = this.props;
     const {
       name,
       email,
       photo,
-    } = user;
+    } = user || {};
 
     if (loading) {
       return (
@@ -110,6 +111,8 @@ class Profile extends PureComponent {
         />
       );
     }
+
+    console.log(this.props);
 
     return (
       <div className="c-myrw-edit-profile">

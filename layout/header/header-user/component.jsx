@@ -1,4 +1,4 @@
-import React, {
+import {
   useState,
 } from 'react';
 import PropTypes from 'prop-types';
@@ -6,26 +6,39 @@ import Link from 'next/link';
 import { toastr } from 'react-redux-toastr';
 import Tether from 'react-tether';
 import { useDebouncedCallback } from 'use-debounce';
+import { signOut } from 'next-auth/client';
+
+// hooks
+import {
+  useMe,
+} from 'hooks/user';
 
 // components
 import Icon from 'components/ui/icon';
 
-const HeaderUser = ({
-  user,
-}) => {
+const HeaderUser = () => {
   const [isVisible, setVisibility] = useState(false);
+  const {
+    data: user,
+  } = useMe();
 
-  const logout = (e) => {
+  console.log('user', user);
+
+  const logout = async (e) => {
     if (e) e.preventDefault();
 
-    // TO-DO: move this to an action
-    fetch(`${process.env.NEXT_PUBLIC_WRI_API_URL}/auth/logout`, { credentials: 'include' })
-      .then(() => {
-        window.location.href = `/logout?callbackUrl=${window.location.href}`;
-      })
-      .catch((err) => {
-        toastr.error('Error', err);
-      });
+    try {
+      signOut();
+    } catch (err) {
+      toastr.error();
+    }
+    // await = fetch(`${process.env.NEXT_PUBLIC_WRI_API_URL}/auth/logout`, { credentials: 'include' })
+    //   .then(() => {
+    //     window.location.href = `/logout?callbackUrl=${window.location.href}`;
+    //   })
+    //   .catch((err) => {
+    //     toastr.error('Error', err);
+    //   });
   };
 
   const [toggleDropdown] = useDebouncedCallback((_isVisible) => {
@@ -33,13 +46,12 @@ const HeaderUser = ({
   }, 50);
 
   const {
-    token,
     photo,
     role,
     email,
-  } = user;
+  } = user || {};
 
-  if (token) {
+  if (user) {
     const userAvatar = photo ? `url(${photo})` : 'none';
 
     return (
@@ -131,7 +143,7 @@ const HeaderUser = ({
   }
 
   return (
-    <Link href="/sign-in">
+    <Link href="/sign-in?callbackUrl=http://localhost:9000/about/partners">
       <a className="header-menu-link">
         <Icon
           name="icon-user"

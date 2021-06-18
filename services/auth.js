@@ -10,9 +10,21 @@ export const signIn = (userCredentials = {}) => WRIAPI.post('/auth/login', userC
 
 export const signOut = (userToken) => WRIAPI.get('/auth/logout', {
   headers: {
-    Authorization: userToken,
+    Authorization: `Bearer ${userToken}`,
   },
 })
+  .then(({ status, statusText, data }) => {
+    if (status >= 400) throw Error(statusText);
+    return data;
+  });
+
+export const updateUser = (userData, userToken) => WRIAPI.patch('/auth/user/me',
+  userData,
+  {
+    headers: {
+      Authorization: `Bearer ${userToken}`,
+    },
+  })
   .then(({ status, statusText, data }) => {
     if (status >= 400) throw Error(statusText);
     return data;

@@ -124,18 +124,18 @@ async function init() {
   return new Promise((resolve, reject) => {
     if (process.env.SERVER_ONLY !== 'true') {
       app.prepare().then(() => {
-        const handleUrl = (req, res) => {
-          const parsedUrl = parse(req.url, true);
-          return handle(req, res, parsedUrl);
-        };
+        // const handleUrl = (req, res) => {
+        //   const parsedUrl = parse(req.url, true);
+        //   return handle(req, res, parsedUrl);
+        // };
 
         // authenticated routes
-        server.get('/myrw', isAuthenticated, (req, res) => {
-          res.redirect('/myrw/widgets/my_widgets');
-        });
-        server.get('/myrw-detail*?', isAuthenticated, handleUrl); // TODO: review these routes
-        server.get('/myrw*?', isAuthenticated, handleUrl);
-        server.get('/admin*?', isAuthenticated, isAdmin, handleUrl);
+        // server.get('/myrw', isAuthenticated, (req, res) => {
+        //   res.redirect('/myrw/widgets/my_widgets');
+        // });
+        // server.get('/myrw-detail*?', isAuthenticated, handleUrl); // TODO: review these routes
+        // server.get('/myrw*?', isAuthenticated, handleUrl);
+        // server.get('/admin*?', isAuthenticated, isAdmin, handleUrl);
 
         server.all('*', (req, res) => handle(req, res));
 
