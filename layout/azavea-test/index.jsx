@@ -1,13 +1,14 @@
 import AppLayout from 'layout/layout/layout-app';
 
 import PropTypes from 'prop-types';
+import AzaveaSampleViz from 'components/azavea/sampleViz';
 
 // Most other Layouts in this project seem to be thin wrappers for wiring up props (e.g. for
 // authentication info), and the actual JSX is inside a separate component.  Currently this Layout
 // doesn't rely on any external information, so there are no props to wire up, and our style tends
 // to keep wiring and the actual component together in the same file anyway, so I've leaned toward
 // Azavea style rather than project style in this case.
-export default function AzaveaTestLayout({ children }) {
+export default function AzaveaTestLayout() {
   return (
     <AppLayout
       title="Test Page"
@@ -32,12 +33,11 @@ export default function AzaveaTestLayout({ children }) {
           components.
         </p>
         <p>If there is other content nested inside this layout, it will show up here:</p>
-        {children}
+        <div className="c-widget-block">
+          <AzaveaSampleViz />
+        </div>
         <p>And this will show up after any child content.</p>
       </section>
     </AppLayout>
   );
 }
-
-// There are linting rules that enforce the presence of this.
-AzaveaTestLayout.propTypes = { children: PropTypes.node.isRequired };
